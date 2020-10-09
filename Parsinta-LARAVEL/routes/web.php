@@ -18,6 +18,10 @@ Route::get('/', function () {
 });
 
 Route::get('posts', 'PostController@index');
+
+Route::get('posts/create', 'PostController@create');
+Route::post('posts/store', 'PostController@store');
+
 Route::get('posts/{post:slug}', 'PostController@show');
 // Route::get('posts/{post:slug}', 'PostController@show'); terima Slug
 // Route::get('posts/{post}', 'PostController@show'); terima ID

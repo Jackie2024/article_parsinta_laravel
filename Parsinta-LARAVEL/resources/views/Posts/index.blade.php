@@ -13,27 +13,33 @@
 
     </div>
     <div class="row">
-        @foreach ($posts as $post)
+        @forelse ($posts as $post)
         <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header">
-                {{$post->title}}
-            </div>
-            <div class="card-body">
-                <div>
-                    {{-- {{Str::limit($post->body, 100)}} --}}
-                    {{Str::limit($post->body, 100, '')}}
+            <div class="card mb-4">
+                <div class="card-header">
+                    {{$post->title}}
                 </div>
-                <a href="/posts/{{$post->slug}}">Read more</a>
-            </div>
-            <div class="card-footer">
-                {{-- Published on {{$post->created_at->format("D F, Y")}} --}}
-                Published on {{$post->created_at->diffForHumans()}}
-                {{-- m untuk tampilkan angka bulan, d buat tampilkan tanggal, F full month--}}
+                <div class="card-body">
+                    <div>
+                        {{-- {{Str::limit($post->body, 100)}} --}}
+                        {{Str::limit($post->body, 100, '')}}
+                    </div>
+                    <a href="/posts/{{$post->slug}}">Read more</a>
+                </div>
+                <div class="card-footer">
+                    {{-- Published on {{$post->created_at->format("D F, Y")}} --}}
+                    Published on {{$post->created_at->diffForHumans()}}
+                    {{-- m untuk tampilkan angka bulan, d buat tampilkan tanggal, F full month--}}
+                </div>
             </div>
         </div>
-        </div>
-        @endforeach
+        @empty
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    There are no posts
+                </div>
+            </div>
+        @endforelse
     </div>
     <div class="d-flex justify-content-center">
         {{$posts->links()}}
