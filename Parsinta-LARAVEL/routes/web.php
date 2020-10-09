@@ -14,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+Route::get('posts', 'PostController@index');
+Route::get('posts/{post:slug}', 'PostController@show');
+// Route::get('posts/{post:slug}', 'PostController@show'); terima Slug
+// Route::get('posts/{post}', 'PostController@show'); terima ID
+
+Route::view('/login', 'login');
+Route::view('/contact', 'contact');
+Route::view('/about', 'about');
