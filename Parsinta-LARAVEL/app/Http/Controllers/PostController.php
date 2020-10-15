@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Post;
 use Illuminate\Http\Request;
 
@@ -25,10 +26,12 @@ class PostController extends Controller
     }
 
     public function create(){
-        return view ('posts.create');
+        return view ('posts.create', ['post' => new Post()]);
     }
 
-    public function store(){
+    public function store(PostRequest $request){
+                         //ini panggil kelas PostRequest untuk validasi
+
         // $post = new Post;
         // $post->title = $request->title;
         // $post->slug = \Str::slug($request->title);
@@ -42,12 +45,13 @@ class PostController extends Controller
 
         // ]);
 
-        //Validate the field
-        $attr = request()->validate([
-            'title' => 'required|min:3|max:10',
-            'body' => 'required'
-        ]);
+        // //Validate the field
+        // $attr = request()->validate([
+        //     'title' => 'required|min:3|max:10',
+        //     'body' => 'required'
+        // ]);
 
+        $attr = $request->all();
         //Assign title to the slug
         $attr['slug'] = \Str::slug(request('title'));
 
@@ -65,13 +69,17 @@ class PostController extends Controller
 
     public function update(Post $post){
         //Validate the field
-         $attr = request()->validate([
-            'title' => 'required|min:3|max:10',
-            'body' => 'required'
-        ]);
+        $attr = $this->validateRequest(); //ini cara kedua untuk validasi
 
         $post->update($attr);
         session()->flash('success', 'The Post was successfully updated!');
         return redirect('posts');
+    }
+
+    public function validateRequest(){
+        return request()->validate([
+            'title' => 'required|min:3|max:10',
+            'body' => 'required'
+        ]);
     }
 }
