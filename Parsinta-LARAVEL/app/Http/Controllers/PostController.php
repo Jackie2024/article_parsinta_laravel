@@ -82,4 +82,13 @@ class PostController extends Controller
             'body' => 'required'
         ]);
     }
+
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        session()->flash("success", "Post successfully deleted!");
+        return redirect('posts');
+    }
+
+
 }
