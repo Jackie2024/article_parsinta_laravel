@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\{Category, Post, Tag};
 use App\Http\Requests\PostRequest;
-use App\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -26,18 +26,24 @@ class PostController extends Controller
     }
 
     public function create(){
-        return view ('posts.create', ['post' => new Post()]);
+        return view ('posts.create', [
+                    'post' => new Post(),
+                    'categories' => Category::get(),
+                    'tags' => Tag::get()
+        ]);
     }
 
     public function store(PostRequest $request){
-                         //ini panggil kelas PostRequest untuk validasi
+        //ini panggil kelas PostRequest untuk validasi secara langsung
 
+        //Cara 1
         // $post = new Post;
         // $post->title = $request->title;
         // $post->slug = \Str::slug($request->title);
         // $post->body = $request->body;
         // $post->save();
 
+        //Cara 2 ini harus pakai fillable dan guarded
         // Post::create([
         //     'title' => $request->title,
         //     'slug' => \Str::slug($request->title),
@@ -54,9 +60,11 @@ class PostController extends Controller
         $attr = $request->all();
         //Assign title to the slug
         $attr['slug'] = \Str::slug(request('title'));
-
+        $attr['category_id'] = request('category');
         //Create new post
-        Post::create($attr);
+        $post = Post::create($attr);
+
+        $post->tags()->attach(request('tags'));
 
         session()->flash('success', 'The Post was successfully created!');
         return redirect('posts');
@@ -64,14 +72,21 @@ class PostController extends Controller
     }
 
     public function edit(Post $post){
-        return view('posts.edit', compact('post'));
+        return view('posts.edit',[
+            'post' => $post,
+            'categories' => Category::get(),
+            'tags' => Tag::get()
+        ]);
     }
 
     public function update(Post $post){
         //Validate the field
         $attr = $this->validateRequest(); //ini cara kedua untuk validasi
-
+        //cara pertama bisa pakai $request kayak di store
+        $attr['category_id'] = request('category');
         $post->update($attr);
+        $post->tags()->sync(request('tags'));
+
         session()->flash('success', 'The Post was successfully updated!');
         return redirect('posts');
     }
@@ -79,12 +94,15 @@ class PostController extends Controller
     public function validateRequest(){
         return request()->validate([
             'title' => 'required|min:3|max:10',
-            'body' => 'required'
+            'body' => 'required',
+        ], [
+            'title.required' => 'Title diperlukan'
         ]);
     }
 
     public function destroy(Post $post)
     {
+        $post->tags()->detach();
         $post->delete();
         session()->flash("success", "Post successfully deleted!");
         return redirect('posts');

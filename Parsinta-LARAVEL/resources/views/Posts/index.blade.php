@@ -4,7 +4,17 @@
 <div class="container">
     <div class="d-flex justify-content-between">
         <div>
-            <h4>All Post</h4>
+            @isset ($category)
+                <h4>Category: {{$category->name}}</h4>
+            @endisset
+
+            @isset ($tag)
+                <h4>Tags: {{$tag->name}}</h4>
+            @endisset
+
+            @if (!isset($tag) && !isset($category))
+                <h4>All Post</h4>
+            @endif
             <hr>
         </div>
         <div>
@@ -45,5 +55,6 @@
     <div class="d-flex justify-content-center">
         {{$posts->links()}}
     </div>
+
 </div>
 @endsection
