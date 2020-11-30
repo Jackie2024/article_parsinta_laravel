@@ -18,7 +18,11 @@
             <hr>
         </div>
         <div>
-            <a href="/posts/create" class ="btn btn-primary">New Post</a>
+            @if (Auth::check())
+                <a href="{{route('posts.create')}}" class ="btn btn-primary">New Post</a>
+            @else
+                <a href="{{route('login')}}" class ="btn btn-primary">Login to create a new Post</a>
+            @endif
         </div>
 
     </div>
@@ -39,7 +43,9 @@
                 <div class="card-footer d-flex justify-content-between">
                     {{-- Published on {{$post->created_at->format("D F, Y")}} --}}
                     Published on {{$post->created_at->diffForHumans()}}
-                    <a href="/posts/{{$post->slug}}/edit" class="btn btn-sm btn-success">Edit</a>
+                    @auth
+                        <a href="/posts/{{$post->slug}}/edit" class="btn btn-sm btn-success">Edit</a>
+                    @endauth
                     {{-- m untuk tampilkan angka bulan, d buat tampilkan tanggal, F full month--}}
                 </div>
             </div>

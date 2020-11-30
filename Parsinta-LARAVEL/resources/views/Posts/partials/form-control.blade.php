@@ -22,7 +22,6 @@
         </div>
     @enderror
 </div>
-
 <div class="form-group">
     <label for="tags">Tags</label>
     <select name="tags[]" value ="" id="tags" class="form-control @error('tags') is-invalid @enderror select2" multiple>

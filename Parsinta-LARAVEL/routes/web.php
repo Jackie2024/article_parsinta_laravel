@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,27 +14,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
+Route::prefix('posts')->middleware('auth')->group(function () {
+    Route::get('', 'PostController@index')->name('posts.index')->withoutMiddleware('auth');
+    Route::get('/create', 'PostController@create')->name('posts.create');
+    Route::post('/store', 'PostController@store');
+    Route::get('/{post:slug}/edit', 'PostController@edit');
+    Route::patch('/{post:slug}/edit', 'PostController@update');
+    Route::delete('/{post:slug}/delete', 'PostController@destroy');
+    Route::get('/{post:slug}', 'PostController@show')->withoutMiddleware('auth');
 });
-
-Route::get('posts', 'PostController@index');
-
-Route::get('posts/create', 'PostController@create');
-Route::post('posts/store', 'PostController@store');
-
-Route::get('posts/{post:slug}/edit', 'PostController@edit');
-Route::patch('posts/{post:slug}/edit', 'PostController@update');
-
-Route::delete('posts/{post:slug}/delete', 'PostController@destroy');
 
 Route::get('categories/{category:slug}', 'CategoryController@show');
 Route::get('tags/{tag:slug}', 'TagController@show');
-
-Route::get('posts/{post:slug}', 'PostController@show');
 // Route::get('posts/{post:slug}', 'PostController@show'); terima Slug
 // Route::get('posts/{post}', 'PostController@show'); terima ID
 
 Route::view('/login', 'login');
 Route::view('/contact', 'contact');
 Route::view('/about', 'about');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
