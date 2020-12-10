@@ -40,6 +40,7 @@ class PostController extends Controller
     }
 
     public function store(PostRequest $request){
+
         //ini panggil kelas PostRequest untuk validasi secara langsung
 
         //Cara 1
@@ -63,18 +64,22 @@ class PostController extends Controller
         //     'body' => 'required'
         // ]);
 
+        //current user
+        // dd(auth()->user());
+
         $attr = $request->all();
         //Assign title to the slug
         $attr['slug'] = \Str::slug(request('title'));
         $attr['category_id'] = request('category');
+        dd(request()->all());
         //Create new post
-        $post = Post::create($attr);
+        $post = auth()->user()->posts()->create($attr);
 
         $post->tags()->attach(request('tags'));
 
-        dd($post);
+        // dd($post);
         session()->flash('success', 'The Post was successfully created!');
-        // return redirect('posts');
+        return redirect('posts');
         // return back();
     }
 
@@ -109,11 +114,11 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        $post->tags()->detach();
-        $post->delete();
-        session()->flash("success", "Post successfully deleted!");
-        return redirect('posts');
+        if(auth()->user()->is($post->author)){
+            $post->tags()->detach();
+            $post->delete();
+            session()->flash("success", "Post successfully deleted!");
+            return redirect('posts');
+        }
     }
-
-
 }
